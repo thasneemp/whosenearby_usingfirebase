@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            keyAlias 'thasneem'
+            keyPassword '123456'
+            storeFile file('E:/gitrepos/WhoseNearby/whosenearby_usingfirebase/WhoseNearBy/app/src/main/assets/keystore.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 23
-    buildToolsVersion "24.0.0"
-
+    buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "test.launcher.mummu.whosenearby"
         minSdkVersion 16
@@ -20,7 +27,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.2'
+    compile 'com.google.android.gms:play-services-location:9.0.2'
+    compile 'com.google.firebase:firebase-database:9.0.2'
 }
+apply plugin: 'com.google.gms.google-services'
+

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WhoseNearBy</string>
+    <!--<string name="google_maps_key">AIzaSyALzd0FOmwLQ3WDebPdaYgrqGUPsJo6Q18</string>-->
+    <string name="google_maps_key">AIzaSyBpP9GzjHjoaaPCsUtct8Y8LfbFoY86W24</string>
 </resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "999598555001",
+    "firebase_url": "https://muhammedthasneem-77858.firebaseio.com",
+    "project_id": "muhammedthasneem-77858",
+    "storage_bucket": "muhammedthasneem-77858.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999598555001:android:360739e9b4de30bb",
+        "android_client_info": {
+          "package_name": "test.launcher.mummu.whosenearby"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999598555001-40i34l4lerofk203r1379gg2itgra3ob.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "test.launcher.mummu.whosenearby",
+            "certificate_hash": "6DF4E2A2FB857DEA304F40794695655A55497D19"
+          }
+        },
+        {
+          "client_id": "999598555001-kn4p4mdjo9au0rv7u3upb5sii4v8mitv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2e5OYdm1YSLPvdTqUiZiAMqXb6dIAv2Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999598555001-kn4p4mdjo9au0rv7u3upb5sii4v8mitv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
