@@ -3,6 +3,10 @@ package test.launcher.mummu.whosenearby;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -10,6 +14,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,11 +47,11 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class MainActivity extends FragmentActivity implements LocationListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private LocationRequest locationRequest;
     private static final long INTERVAL = 1000 * 10;
-    private static final long FATEST_INTERVAL = 1000 * 5;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
     private GoogleApiClient googleMapClient;
     private String deviceId;
     private FirebaseDatabase database;
@@ -53,6 +61,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private Marker myMarker;
     HashMap<String, Marker> users = new HashMap<>();
     private Circle myCircle;
+    private SensorManager mSensorManager;
+    private float targetAngle;
+    private float currentDegree_needle;
+    private ImageView imageView;
 
 
     @Override
@@ -61,7 +73,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         setContentView(R.layout.activity_main);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        imageView = (ImageView) findViewById(R.id.imageView);
         mapFragment.getMapAsync(this);
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         deviceId = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         database = FirebaseDatabase.getInstance();
@@ -131,8 +145,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             double lat = Double.parseDouble(latitude);
             double log = Double.parseDouble(longitude);
 
-            LatLng latLng = new LatLng(lat, log);
+            Location destinLocation = new Location("");
+            destinLocation.setLatitude(lat);
+            destinLocation.setLongitude(log);
 
+            LatLng latLng = new LatLng(lat, log);
+            targetAngle = (360 + currentLocation.bearingTo(destinLocation)) % 360;
             addToMap(latLng, dataSnapshot);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -155,13 +173,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void createLocationRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
-        locationRequest.setFastestInterval(FATEST_INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override
     protected void onStart() {
-
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME);
         super.onStart();
     }
 
@@ -232,5 +251,33 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float degree_compass = Math.round(event.values.clone()[0]);
+        rotate_needle((degree_compass - targetAngle) % 360);
+    }
+
+    private void rotate_needle(float degree) {
+        RotateAnimation ra = new RotateAnimation(
+                currentDegree_needle, -degree,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        ra.setInterpolator(new LinearInterpolator());
+        // how long the animation will take place
+        ra.setDuration(5000);
+
+        // set the animation after the end of the reservation status
+        ra.setFillAfter(true);
+
+        // Start the animation
+        imageView.startAnimation(ra);
+        currentDegree_needle = -degree;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
